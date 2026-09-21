@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Pulse</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="dashboard">
+    <header class="dashboard__header">
+      <h1>Project Pulse</h1>
+      <p>Track project health, ownership, priority, and recent momentum at a glance.</p>
+    </header>
+
+    <section class="dashboard__grid" id="projects" aria-live="polite"></section>
+
+    <p class="empty-state" hidden>No projects to show yet.</p>
+    <p class="error-state" hidden>Couldn't load project data.</p>
+
+    <template id="project-card-template">
+      <article class="project-card">
+        <header>
+          <h2 class="project-card__title"></h2>
+          <span class="status-badge"></span>
+        </header>
+        <p class="project-card__owner"></p>
+        <p class="project-card__activity"></p>
+        <p class="project-card__summary"></p>
+        <span class="priority"></span>
+      </article>
+    </template>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const projectsGrid = document.querySelector('#projects');
+      const cardTemplate = document.querySelector('#project-card-template');
+      const emptyState = document.querySelector('.empty-state');
+      const errorState = document.querySelector('.error-state');
+
+      const statusVariants = {
+        'on-track': 'status-badge--on-track',
+        'at-risk': 'status-badge--at-risk',
+        'blocked': 'status-badge--blocked',
+        'complete': 'status-badge--complete'
+      };
+
+      const priorityVariants = {
+        'low': 'priority--low',
+        'medium': 'priority--medium',
+        'high': 'priority--high',
+        'critical': 'priority--critical'
+      };
+
+      const normalizeValue = (value) => {
+        if (typeof value !== 'string') {
+          return '';
+        }
+
+        return value.trim().toLowerCase();
+      };
+
+      const formatStatusLabel = (status) => {
+        const normalizedStatus = normalizeValue(status);
+
+        if (!normalizedStatus) {
+          return 'Unknown';
+        }
+
+        return normalizedStatus
+          .split('-')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+      };
+
+      const renderProjects = (projects) => {
+        projectsGrid.textContent = '';
+        emptyState.hidden = true;
+        errorState.hidden = true;
+
+        if (projects.length === 0) {
+          emptyState.hidden = false;
+          return;
+        }
+
+        projects.forEach((project) => {
+          const cardFragment = cardTemplate.content.cloneNode(true);
+          const card = cardFragment.querySelector('.project-card');
+          const title = card.querySelector('.project-card__title');
+          const owner = card.querySelector('.project-card__owner');
+          const activity = card.querySelector('.project-card__activity');
+          const summary = card.querySelector('.project-card__summary');
+          const statusBadge = card.querySelector('.status-badge');
+          const priority = card.querySelector('.priority');
+
+          const normalizedStatus = normalizeValue(project.status);
+          const normalizedPriority = normalizeValue(project.priority);
+          const projectName = typeof project.name === 'string' && project.name.trim()
+            ? project.name.trim()
+            : 'Untitled project';
+          const projectOwner = typeof project.owner === 'string' && project.owner.trim()
+            ? project.owner.trim()
+            : 'Unknown owner';
+          const recentActivity = typeof project.recentActivity === 'string' && project.recentActivity.trim()
+            ? project.recentActivity.trim()
+            : 'No recent activity';
+
+          title.textContent = projectName;
+          owner.textContent = `Owner: ${projectOwner}`;
+          activity.textContent = `Recent activity: ${recentActivity}`;
+
+          statusBadge.textContent = formatStatusLabel(project.status);
+          statusBadge.classList.add(statusVariants[normalizedStatus] || 'status-badge--unknown');
+
+          priority.textContent = `Priority: ${normalizedPriority ? normalizedPriority.toUpperCase() : 'UNKNOWN'}`;
+          priority.classList.add(priorityVariants[normalizedPriority] || 'priority--unknown');
+
+          if (typeof project.summary === 'string' && project.summary.trim()) {
+            summary.textContent = project.summary.trim();
+          } else {
+            summary.remove();
+          }
+
+          projectsGrid.appendChild(cardFragment);
+        });
+      };
+
+      const showError = (error) => {
+        emptyState.hidden = true;
+        errorState.hidden = false;
+        console.error(error);
+      };
+
+      fetch('./project-data.json')
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Project data request failed with status ${response.status}`);
+          }
+
+          return response.json();
+        })
+        .then((data) => {
+          if (!Array.isArray(data.projects)) {
+            throw new Error('Project data must include a top-level projects array.');
+          }
+
+          renderProjects(data.projects);
+        })
+        .catch(showError);
+    });
+  </script>
+</body>
+</html>

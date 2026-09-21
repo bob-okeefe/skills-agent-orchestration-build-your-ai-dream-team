@@ -1,0 +1,541 @@
+/* =========================================================================
+   Project Pulse — Dashboard Stylesheet
+   Owner: Designer agent. Scope: app/styles.css only.
+   Contract: hooks are defined in docs/project-pulse-plan.md §3.
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   1. Design tokens
+   ------------------------------------------------------------------------- */
+:root {
+  /* Color — neutrals */
+  --color-bg: #f4f6fb;
+  --color-surface: #ffffff;
+  --color-surface-alt: #fbfcfe;
+  --color-border: #e3e7ef;
+  --color-border-strong: #cbd2e0;
+  --color-text: #101828;
+  --color-text-muted: #4a5568;
+  --color-text-subtle: #6b7280;
+
+  /* Color — brand accent */
+  --color-accent: #3b5bdb;
+  --color-accent-strong: #2f46b3;
+  --color-accent-soft: #eaeeff;
+
+  /* Color — status (badges): background + text chosen for AA contrast */
+  --status-on-track-bg: #d3f4e0;
+  --status-on-track-fg: #0f5132;
+  --status-at-risk-bg: #ffe7bf;
+  --status-at-risk-fg: #6b3d00;
+  --status-blocked-bg: #ffd6d6;
+  --status-blocked-fg: #7a0e0e;
+  --status-complete-bg: #dbe6ff;
+  --status-complete-fg: #14307a;
+  --status-unknown-bg: #e5e7eb;
+  --status-unknown-fg: #1f2937;
+
+  /* Color — priority (accent stripe + chip) */
+  --priority-low: #2f9e6b;
+  --priority-medium: #b6862b;
+  --priority-high: #c74a1b;
+  --priority-critical: #a01033;
+  --priority-unknown: #6b7280;
+
+  /* Spacing scale (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06),
+               0 1px 3px rgba(16, 24, 40, 0.08);
+  --shadow-md: 0 4px 10px rgba(16, 24, 40, 0.06),
+               0 10px 24px rgba(16, 24, 40, 0.08);
+  --shadow-lg: 0 12px 28px rgba(16, 24, 40, 0.12),
+               0 20px 40px rgba(16, 24, 40, 0.10);
+
+  /* Typography */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+               Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+               "Segoe UI Emoji";
+  --fs-h1: 1.875rem;   /* 30px */
+  --fs-h2: 1.125rem;   /* 18px */
+  --fs-body: 1rem;     /* 16px */
+  --fs-small: 0.8125rem; /* 13px */
+  --lh-tight: 1.25;
+  --lh-body: 1.5;
+
+  /* Layout */
+  --dashboard-max-width: 1240px;
+
+  /* Motion */
+  --transition-fast: 120ms ease;
+  --transition-med: 200ms ease;
+}
+
+/* -------------------------------------------------------------------------
+   2. Reset & base
+   ------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(1200px 400px at 90% -10%, rgba(59, 91, 219, 0.06), transparent 60%),
+    radial-gradient(800px 300px at -10% 10%, rgba(59, 91, 219, 0.05), transparent 60%);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, p {
+  margin: 0;
+}
+
+a {
+  color: var(--color-accent);
+}
+
+/* -------------------------------------------------------------------------
+   3. Focus (accessibility)
+   ------------------------------------------------------------------------- */
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* -------------------------------------------------------------------------
+   4. Dashboard shell
+   ------------------------------------------------------------------------- */
+.dashboard {
+  max-width: var(--dashboard-max-width);
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) var(--space-7);
+}
+
+.dashboard__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) 0 var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--space-5);
+}
+
+.dashboard__header h1,
+.dashboard__title {
+  font-size: var(--fs-h1);
+  line-height: var(--lh-tight);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+.dashboard__header p,
+.dashboard__tagline {
+  font-size: var(--fs-body);
+  color: var(--color-text-muted);
+  max-width: 60ch;
+}
+
+/* -------------------------------------------------------------------------
+   5. Grid
+   ------------------------------------------------------------------------- */
+.dashboard__grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .dashboard__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .dashboard {
+    padding-left: var(--space-6);
+    padding-right: var(--space-6);
+  }
+}
+
+/* -------------------------------------------------------------------------
+   6. Project card
+   ------------------------------------------------------------------------- */
+.project-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  padding-left: calc(var(--space-5) + 6px); /* room for priority stripe */
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast),
+              box-shadow var(--transition-med),
+              border-color var(--transition-fast);
+  min-width: 0; /* enable text truncation in children */
+  overflow: hidden;
+}
+
+.project-card::before {
+  /* Priority accent stripe. Colour set by .priority--* on the card,
+     but we also allow the card itself to carry the priority variant. */
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 6px;
+  background: var(--priority-unknown);
+  border-top-left-radius: var(--radius-lg);
+  border-bottom-left-radius: var(--radius-lg);
+}
+
+.project-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border-strong);
+}
+
+.project-card:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.project-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.project-card__title {
+  font-size: var(--fs-h2);
+  font-weight: 650;
+  line-height: var(--lh-tight);
+  color: var(--color-text);
+  /* Wrap long project names without breaking the layout */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+  margin: 0;
+}
+
+.project-card__owner {
+  font-size: var(--fs-small);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.project-card__owner::before {
+  content: "👤";
+  font-size: 0.9em;
+  filter: grayscale(0.2);
+  line-height: 1;
+}
+
+.project-card__summary {
+  font-size: var(--fs-body);
+  color: var(--color-text);
+  /* Clamp to keep cards visually consistent */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.project-card__activity {
+  margin-top: auto; /* pin to card bottom */
+  padding-top: var(--space-3);
+  border-top: 1px dashed var(--color-border);
+  font-size: var(--fs-small);
+  color: var(--color-text-subtle);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.project-card__activity::before {
+  content: "🕒";
+  font-size: 0.9em;
+  line-height: 1;
+}
+
+.project-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+/* -------------------------------------------------------------------------
+   7. Status badges
+   ------------------------------------------------------------------------- */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
+  background: var(--status-unknown-bg);
+  color: var(--status-unknown-fg);
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.status-badge::before {
+  /* Non-color glyph so status remains distinguishable without color */
+  content: "•";
+  font-size: 1em;
+  line-height: 1;
+}
+
+.status-badge--on-track {
+  background: var(--status-on-track-bg);
+  color: var(--status-on-track-fg);
+}
+.status-badge--on-track::before { content: "✓"; }
+
+.status-badge--at-risk {
+  background: var(--status-at-risk-bg);
+  color: var(--status-at-risk-fg);
+}
+.status-badge--at-risk::before { content: "▲"; }
+
+.status-badge--blocked {
+  background: var(--status-blocked-bg);
+  color: var(--status-blocked-fg);
+}
+.status-badge--blocked::before { content: "■"; }
+
+.status-badge--complete {
+  background: var(--status-complete-bg);
+  color: var(--status-complete-fg);
+}
+.status-badge--complete::before { content: "★"; }
+
+.status-badge--unknown {
+  background: var(--status-unknown-bg);
+  color: var(--status-unknown-fg);
+}
+.status-badge--unknown::before { content: "?"; }
+
+/* -------------------------------------------------------------------------
+   8. Priority treatment
+   Applied to .project-card (drives the ::before stripe) and to the inline
+   .priority chip element. Text label is always shown by the Coder — this
+   styling adds a second, non-color channel via shape/glyph and stripe.
+   ------------------------------------------------------------------------- */
+.priority {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  border: 1px solid var(--color-border-strong);
+  white-space: nowrap;
+}
+
+.priority::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--priority-unknown);
+  flex: none;
+}
+
+/* Chip color variants */
+.priority--low::before      { background: var(--priority-low); }
+.priority--medium::before   { background: var(--priority-medium); border-radius: 50%; }
+.priority--high::before     { background: var(--priority-high); transform: rotate(45deg); }
+.priority--critical::before {
+  background: var(--priority-critical);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  border-radius: 0;
+}
+.priority--unknown::before  { background: var(--priority-unknown); }
+
+/* Priority variant on the card sets the accent stripe color */
+.project-card.priority--low::before      { background: var(--priority-low); }
+.project-card.priority--medium::before   { background: var(--priority-medium); }
+.project-card.priority--high::before     { background: var(--priority-high); }
+.project-card.priority--critical::before { background: var(--priority-critical); }
+.project-card.priority--unknown::before  { background: var(--priority-unknown); }
+
+/* Critical priority gets a subtle emphasis on the card itself */
+.project-card.priority--critical {
+  border-color: rgba(160, 16, 51, 0.35);
+  box-shadow: var(--shadow-sm),
+              inset 0 0 0 1px rgba(160, 16, 51, 0.08);
+}
+
+/* -------------------------------------------------------------------------
+   9. Empty & error states
+   ------------------------------------------------------------------------- */
+.empty-state,
+.error-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--space-7) var(--space-5);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.empty-state h2,
+.error-state h2 {
+  font-size: var(--fs-h2);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.empty-state p,
+.error-state p {
+  max-width: 48ch;
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.empty-state::before {
+  content: "📭";
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.error-state {
+  border-color: rgba(199, 74, 27, 0.4);
+  background: #fff8f5;
+  color: #7a2e12;
+}
+
+.error-state h2 { color: #7a2e12; }
+.error-state p  { color: #7a2e12; }
+
+.error-state::before {
+  content: "⚠️";
+  font-size: 2rem;
+  line-height: 1;
+}
+
+/* Utility for hiding state nodes until toggled by app.js */
+[hidden] { display: none !important; }
+
+/* -------------------------------------------------------------------------
+   10. Reduced motion
+   ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+  .project-card:hover {
+    transform: none;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   11. Dark mode (small, safe, AA-checked)
+   ------------------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0f1420;
+    --color-surface: #171d2c;
+    --color-surface-alt: #1d2536;
+    --color-border: #263049;
+    --color-border-strong: #364261;
+    --color-text: #eef1f8;
+    --color-text-muted: #b4bccd;
+    --color-text-subtle: #98a2b8;
+
+    --color-accent: #8ea4ff;
+    --color-accent-strong: #b1c0ff;
+    --color-accent-soft: #1e2748;
+
+    --status-on-track-bg: #10381f;
+    --status-on-track-fg: #a7e9c0;
+    --status-at-risk-bg: #402a09;
+    --status-at-risk-fg: #ffd799;
+    --status-blocked-bg: #4a1414;
+    --status-blocked-fg: #ffb2b2;
+    --status-complete-bg: #1a2755;
+    --status-complete-fg: #c3d0ff;
+    --status-unknown-bg: #2a3145;
+    --status-unknown-fg: #e5e7eb;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+  }
+
+  body {
+    background-image:
+      radial-gradient(1200px 400px at 90% -10%, rgba(142, 164, 255, 0.08), transparent 60%),
+      radial-gradient(800px 300px at -10% 10%, rgba(142, 164, 255, 0.06), transparent 60%);
+  }
+
+  .error-state {
+    background: #2a1710;
+    color: #ffc7a8;
+    border-color: rgba(199, 74, 27, 0.5);
+  }
+  .error-state h2, .error-state p { color: #ffc7a8; }
+}

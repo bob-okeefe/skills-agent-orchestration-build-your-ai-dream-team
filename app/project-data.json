@@ -1,0 +1,43 @@
+{
+  "projects": [
+    {
+      "name": "Contributor Onboarding Refresh",
+      "owner": "Mona",
+      "status": "on-track",
+      "recentActivity": "Published the updated first-issue checklist and paired two new maintainers.",
+      "priority": "high",
+      "summary": "Improves the first-week experience for contributors joining the Project Pulse community."
+    },
+    {
+      "name": "API Reliability Audit",
+      "owner": "Platform Guild",
+      "status": "at-risk",
+      "recentActivity": "Identified intermittent timeout spikes during nightly load tests.",
+      "priority": "critical",
+      "summary": "Reviews service health signals and mitigation steps before the next release window."
+    },
+    {
+      "name": "Mobile Notification Accessibility Follow-Up",
+      "owner": "A11y Working Group",
+      "status": "blocked",
+      "recentActivity": "Waiting on screen reader regression results from the device lab.",
+      "priority": "medium"
+    },
+    {
+      "name": "Community Metrics Dashboard Complete Archive Migration",
+      "owner": "Insights Team",
+      "status": "complete",
+      "recentActivity": "Archived final migration notes and shared the read-only dashboard link.",
+      "priority": "low",
+      "summary": "Keeps historical contributor metrics discoverable without maintaining duplicate reports."
+    },
+    {
+      "name": "Extremely Long Cross-Functional Roadmap Alignment Initiative for Testing How Project Card Titles Wrap Across Narrow Dashboard Columns",
+      "owner": "Roadmap Council",
+      "status": "on-track",
+      "recentActivity": "Collected owner feedback and merged the milestone naming proposal.",
+      "priority": "critical",
+      "summary": "Exercises card wrapping behavior while representing a realistic coordination-heavy project."
+    }
+  ]
+}
